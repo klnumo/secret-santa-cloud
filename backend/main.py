@@ -30,10 +30,10 @@ def get_current_user(authorization: str = None):
     except:
         raise HTTPException(401, "Invalid token")
 
-@app.get("/", response_class=HTMLResponse)
-def home():
+@app.get("/")
+async def home():
     with open("../frontend/index.html") as f:
-        return f.read()
+        return HTMLResponse(f.read())
 
 @app.post("/create-group")
 def create_group(name: str = Form(...), user=Depends(get_current_user)):
