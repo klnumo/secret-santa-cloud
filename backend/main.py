@@ -6,6 +6,7 @@ from supabase import Client
 from .supabase import supabase, supabase_admin
 import random
 from jose import jwt, JWTError
+import os
 
 app = FastAPI()
 
