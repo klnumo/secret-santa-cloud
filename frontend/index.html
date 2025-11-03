@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Secret Santa Cloud</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Secret Santa 2025</h1>
+
+    <div id="login">
+      <button onclick="login()">Войти через Google</button>
+    </div>
+
+    <div id="app" style="display:none">
+      <div id="create">
+        <input id="group-name" placeholder="Название группы (Семья 2025)" />
+        <button onclick="createGroup()">Создать группу</button>
+      </div>
+
+      <div id="group" style="display:none">
+        <h2 id="group-title"></h2>
+        <p>Ссылка: <span id="share-link"></span></p>
+
+        <div>
+          <input id="p-name" placeholder="Имя" />
+          <input id="p-email" placeholder="Email" />
+          <button onclick="addParticipant()">Добавить</button>
+        </div>
+
+        <ul id="participants"></ul>
+
+        <button onclick="launch()" id="launch-btn" style="display:none">ЗАПУСТИТЬ ТАЙНОГО САНТУ!</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
