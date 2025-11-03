@@ -18,7 +18,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.mount("/static", StaticFiles(directory="frontend"), name="static")
+app.mount("/static", StaticFiles(directory="backend/frontend"), name="static")
 
 def get_current_user(authorization: str = None):
     if not authorization or not authorization.startswith("Bearer "):
