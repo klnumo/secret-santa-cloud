@@ -1,5 +1,5 @@
-from fastapi import FastAPI, Depends, HTTPException, Form
-from fastapi.responses import HTMLResponse
+from fastapi import FastAPI, Depends, HTTPException, Form, Request
+from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from supabase import Client
@@ -10,6 +10,7 @@ from jose import jwt
 
 app = FastAPI()
 
+# === CORS ===
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -18,8 +19,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# === Статические файлы ===
+# Путь: backend/frontend/ → /static/
 app.mount("/static", StaticFiles(directory="backend/frontend"), name="static")
 
+# === Аутентификация ===
 def get_current_user(authorization: str = None):
     if not authorization or not authorization.startswith("Bearer "):
         raise HTTPException(401, "Missing token")
@@ -30,11 +34,12 @@ def get_current_user(authorization: str = None):
     except:
         raise HTTPException(401, "Invalid token")
 
+# === Главная страница ===
 @app.get("/")
 async def home():
-    with open("../frontend/index.html") as f:
-        return HTMLResponse(f.read())
+    return RedirectResponse(url="/static/index.html")
 
+# === Создать группу ===
 @app.post("/create-group")
 def create_group(name: str = Form(...), user=Depends(get_current_user)):
     res = supabase.table("groups").insert({
@@ -43,6 +48,7 @@ def create_group(name: str = Form(...), user=Depends(get_current_user)):
     }).execute()
     return {"group_id": res.data[0]["id"]}
 
+# === Добавить участника ===
 @app.post("/add-participant")
 def add_participant(group_id: str = Form(...), name: str = Form(...), email: str = Form(...), user=Depends(get_current_user)):
     # Проверка: юзер — создатель группы
@@ -57,6 +63,7 @@ def add_participant(group_id: str = Form(...), name: str = Form(...), email: str
     }).execute()
     return {"status": "added"}
 
+# === Запустить жеребьёвку ===
 @app.post("/launch/{group_id}")
 def launch_santa(group_id: str, user=Depends(get_current_user)):
     group = supabase.table("groups").select("creator_id").eq("id", group_id).execute()
@@ -76,6 +83,7 @@ def launch_santa(group_id: str, user=Depends(get_current_user)):
     
     return {"status": "launched"}
 
+# === Получить группу ===
 @app.get("/group/{group_id}")
 def get_group(group_id: str):
     group = supabase.table("groups").select("name").eq("id", group_id).execute()
