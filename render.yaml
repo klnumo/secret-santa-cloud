@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: secret-santa
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn backend.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      SUPABASE_URL:
+      SUPABASE_ANON_KEY:
+      SUPABASE_SERVICE_ROLE_KEY:
