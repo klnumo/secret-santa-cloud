@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Группа — {{ group.name }}</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>{{ group.name }}</h1>
+    <p>Ссылка: <code>{{ request.url_for('group_page', group_id=group_id) }}</code></p>
+
+    {% if is_owner %}
+    <form method="post" action="/add-participant">
+      <input type="hidden" name="group_id" value="{{ group_id }}">
+      <input type="text" name="name" placeholder="Имя" required>
+      <input type="email" name="email" placeholder="Email" required>
+      <button type="submit">Добавить</button>
+    </form>
+    {% endif %}
+
+    <ul>
+      {% for p in participants %}
+      <li>{{ p.name }} ({{ p.email }}) {% if p.target_id %}→ ???{% endif %}</li>
+      {% endfor %}
+    </ul>
+
+    {% if is_owner and participants|length >= 3 %}
+    <form method="post" action="/launch/{{ group_id }}">
+      <button class="launch">ЗАПУСТИТЬ ЖЕРЕБЬЁВКУ</button>
+    </form>
+    {% endif %}
+  </div>
+</body>
+</html>
